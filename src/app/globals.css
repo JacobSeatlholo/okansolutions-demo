@@ -1,0 +1,164 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-montserrat);
+  --font-display: var(--font-display);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  /* OKAN brand palette — teal #30afb8 (primary), deep navy (foreground), warm amber (CTA accent) */
+  --radius: 0.5rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.32 0.018 242); /* #313b48 */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.32 0.018 242);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.32 0.018 242);
+  --primary: oklch(0.723 0.09 197); /* #30afb8 brand teal */
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.97 0.008 197);
+  --secondary-foreground: oklch(0.32 0.018 242);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.45 0.005 242);
+  --accent: oklch(0.78 0.166 70); /* amber #f59e0b for high-contrast CTAs */
+  --accent-foreground: oklch(0.21 0.022 244);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.92 0.005 197);
+  --input: oklch(0.92 0.005 197);
+  --ring: oklch(0.723 0.09 197);
+  --chart-1: oklch(0.723 0.09 197);
+  --chart-2: oklch(0.78 0.166 70);
+  --chart-3: oklch(0.5 0.07 240);
+  --chart-4: oklch(0.65 0.18 50);
+  --chart-5: oklch(0.55 0.13 150);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.32 0.018 242);
+  --sidebar-primary: oklch(0.723 0.09 197);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.32 0.018 242);
+  --sidebar-border: oklch(0.92 0 0);
+  --sidebar-ring: oklch(0.723 0.09 197);
+
+  /* Brand-specific tokens used across landing sections */
+  --okan-navy: oklch(0.21 0.022 244);     /* deep navy for footer / hero overlays */
+  --okan-navy-deep: oklch(0.16 0.02 244);
+  --okan-cream: oklch(0.985 0.005 80);    /* warm off-white section bg */
+  --okan-steel: oklch(0.55 0.008 242);   /* medium steel for muted text */
+}
+
+.dark {
+  --background: oklch(0.16 0.02 244);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0.022 244);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.21 0.022 244);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.723 0.09 197);
+  --primary-foreground: oklch(0.16 0.02 244);
+  --secondary: oklch(0.269 0.022 244);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0.022 244);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.78 0.166 70);
+  --accent-foreground: oklch(0.16 0.02 244);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.723 0.09 197);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "ss01", "cv11";
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display), var(--font-montserrat), sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Reusable utilities */
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+
+  .okan-hero-overlay {
+    background:
+      linear-gradient(180deg, oklch(0.16 0.022 244 / 0.55) 0%, oklch(0.16 0.022 244 / 0.45) 50%, oklch(0.16 0.022 244 / 0.75) 100%),
+      linear-gradient(90deg, oklch(0.16 0.022 244 / 0.65) 0%, oklch(0.16 0.022 244 / 0) 60%);
+  }
+  .okan-section-grid {
+    background-image:
+      linear-gradient(oklch(0.32 0.018 242 / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(0.32 0.018 242 / 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+  .okan-radial-fade {
+    background: radial-gradient(ellipse 80% 50% at 50% 0%, oklch(0.723 0.09 197 / 0.08), transparent 70%);
+  }
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(180deg, black 70%, transparent 100%);
+            mask-image: linear-gradient(180deg, black 70%, transparent 100%);
+  }
+}
+
+/* Smooth scroll for in-page navigation */
+html { scroll-behavior: smooth; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: oklch(0.97 0 0); }
+::-webkit-scrollbar-thumb {
+  background: oklch(0.723 0.09 197 / 0.6);
+  border-radius: 8px;
+  border: 2px solid oklch(0.97 0 0);
+}
+::-webkit-scrollbar-thumb:hover { background: oklch(0.723 0.09 197); }
+
+/* Hide scrollbar utility for horizontal scroll containers */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
