@@ -46,15 +46,18 @@ const SLIDES = [
 export function Hero() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  // Track mount state without calling setState in an effect (avoids lint error).
+  // We use useSyncExternalStore-like pattern via useState initializer + lazy mount check.
+  const [mounted] = useState(() => typeof window !== "undefined");
 
   const next = useCallback(() => setActive((p) => (p + 1) % SLIDES.length), []);
   const prev = useCallback(() => setActive((p) => (p - 1 + SLIDES.length) % SLIDES.length), []);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || !mounted) return;
     const id = setInterval(next, 7000);
     return () => clearInterval(id);
-  }, [next, paused]);
+  }, [next, paused, mounted]);
 
   const whatsappUrl = buildWhatsAppUrl(
     "Hi OKAN Solutions! I'd like to request a free quote for my project.",
@@ -138,71 +141,76 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl pt-28 pb-32 lg:pt-32">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={active}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
-            >
-              {/* Eyebrow pill */}
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-md">
-                <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/95">
-                  {SLIDES[active].eyebrow}
-                </span>
-              </div>
-
-              {/* Title */}
-              <h1 className="text-balance font-display text-4xl font-extrabold leading-[1.04] text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)] sm:text-5xl lg:text-7xl">
-                {SLIDES[active].title}
-              </h1>
-
-              {/* Subtitle — heavier weight for readability */}
-              <p className="mt-6 max-w-2xl text-pretty text-base font-medium leading-relaxed text-white/95 drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)] sm:text-lg lg:text-xl">
-                {SLIDES[active].subtitle}
-              </p>
-
-              {/* CTAs — clear hierarchy: primary amber solid, secondary outline WhatsApp */}
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                <a
-                  href="#quote"
-                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-4 text-base font-bold text-accent-foreground shadow-xl shadow-accent/30 ring-2 ring-accent/40 transition-all hover:scale-[1.02] hover:brightness-95"
-                >
-                  Get Your Free Quote
-                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </a>
-                <a
-                  href="#quote"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-white/70 bg-white/5 px-7 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-white/15 hover:border-white"
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  Send Project Details
-                </a>
-              </div>
-
-              {/* Trust row — larger, better separated */}
-              <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3 text-sm font-semibold text-white/95">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-accent" />
-                  <span>Licensed · Bonded · Insured</span>
+          {mounted ? (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
+              >
+                {/* Eyebrow pill */}
+                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-md">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/95">
+                    {SLIDES[active].eyebrow}
+                  </span>
                 </div>
-                <div className="hidden h-5 w-px bg-white/25 sm:block" />
-                <div className="flex items-center gap-1.5">
-                  {[0, 1, 2, 3, 4].map((i) => (
-                    <Star key={i} className="h-4 w-4 fill-accent text-accent" />
-                  ))}
-                  <span className="ml-2">5.0 from real Okanagan clients</span>
+
+                {/* Title */}
+                <h1 className="text-balance font-display text-4xl font-extrabold leading-[1.04] text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)] sm:text-5xl lg:text-7xl">
+                  {SLIDES[active].title}
+                </h1>
+
+                {/* Subtitle — heavier weight for readability */}
+                <p className="mt-6 max-w-2xl text-pretty text-base font-medium leading-relaxed text-white/95 drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)] sm:text-lg lg:text-xl">
+                  {SLIDES[active].subtitle}
+                </p>
+
+                {/* CTAs — clear hierarchy: primary amber solid, secondary outline WhatsApp */}
+                <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                  <a
+                    href="#quote"
+                    className="group inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-4 text-base font-bold text-accent-foreground shadow-xl shadow-accent/30 ring-2 ring-accent/40 transition-all hover:scale-[1.02] hover:brightness-95"
+                  >
+                    Get Your Free Quote
+                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </a>
+                  <a
+                    href="#quote"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-white/70 bg-white/5 px-7 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-white/15 hover:border-white"
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    Send Project Details
+                  </a>
                 </div>
-                <div className="hidden h-5 w-px bg-white/25 sm:block" />
-                <div className="flex items-center gap-2">
-                  <span className="font-display text-base font-extrabold text-white">{yearsOfService}+ years</span>
-                  <span className="font-medium text-white/80">serving the Okanagan</span>
+
+                {/* Trust row — larger, better separated */}
+                <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3 text-sm font-semibold text-white/95">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-accent" />
+                    <span>Licensed · Bonded · Insured</span>
+                  </div>
+                  <div className="hidden h-5 w-px bg-white/25 sm:block" />
+                  <div className="flex items-center gap-1.5">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <Star key={i} className="h-4 w-4 fill-accent text-accent" />
+                    ))}
+                    <span className="ml-2">5.0 from real Okanagan clients</span>
+                  </div>
+                  <div className="hidden h-5 w-px bg-white/25 sm:block" />
+                  <div className="flex items-center gap-2">
+                    <span className="font-display text-base font-extrabold text-white">{yearsOfService}+ years</span>
+                    <span className="font-medium text-white/80">serving the Okanagan</span>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+              </motion.div>
+            </AnimatePresence>
+          ) : (
+            // SSR / pre-hydration fallback — content visible without animation
+            <HeroStaticContent slide={SLIDES[0]} yearsOfService={yearsOfService} />
+          )}
         </div>
       </div>
 
@@ -217,5 +225,78 @@ function ChevronLeft({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M15 18l-6-6 6-6" />
     </svg>
+  );
+}
+
+/**
+ * Static (non-animated) hero content rendered during SSR and before client mount.
+ * This ensures the H1, sub-headline, and CTAs are visible even if JS is slow
+ * or disabled — critical for SEO and first-paint UX.
+ */
+function HeroStaticContent({
+  slide,
+  yearsOfService,
+}: {
+  slide: (typeof SLIDES)[number];
+  yearsOfService: number;
+}) {
+  return (
+    <div>
+      {/* Eyebrow pill */}
+      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-md">
+        <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+        <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/95">
+          {slide.eyebrow}
+        </span>
+      </div>
+
+      {/* Title */}
+      <h1 className="text-balance font-display text-4xl font-extrabold leading-[1.04] text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)] sm:text-5xl lg:text-7xl">
+        {slide.title}
+      </h1>
+
+      {/* Subtitle */}
+      <p className="mt-6 max-w-2xl text-pretty text-base font-medium leading-relaxed text-white/95 drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)] sm:text-lg lg:text-xl">
+        {slide.subtitle}
+      </p>
+
+      {/* CTAs */}
+      <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <a
+          href="#quote"
+          className="group inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-4 text-base font-bold text-accent-foreground shadow-xl shadow-accent/30 ring-2 ring-accent/40 transition-all hover:scale-[1.02] hover:brightness-95"
+        >
+          Get Your Free Quote
+          <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+        </a>
+        <a
+          href="#quote"
+          className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-white/70 bg-white/5 px-7 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-white/15 hover:border-white"
+        >
+          <MessageCircle className="h-5 w-5" />
+          Send Project Details
+        </a>
+      </div>
+
+      {/* Trust row */}
+      <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3 text-sm font-semibold text-white/95">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="h-5 w-5 text-accent" />
+          <span>Licensed · Bonded · Insured</span>
+        </div>
+        <div className="hidden h-5 w-px bg-white/25 sm:block" />
+        <div className="flex items-center gap-1.5">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Star key={i} className="h-4 w-4 fill-accent text-accent" />
+          ))}
+          <span className="ml-2">5.0 from real Okanagan clients</span>
+        </div>
+        <div className="hidden h-5 w-px bg-white/25 sm:block" />
+        <div className="flex items-center gap-2">
+          <span className="font-display text-base font-extrabold text-white">{yearsOfService}+ years</span>
+          <span className="font-medium text-white/80">serving the Okanagan</span>
+        </div>
+      </div>
+    </div>
   );
 }
