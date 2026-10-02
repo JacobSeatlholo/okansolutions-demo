@@ -14,10 +14,14 @@ export const okanBusiness = {
     "Based in Lake Country, BC, OKAN Solutions delivers expert construction services across the Okanagan Valley — from custom homes and full renovations to hi-rise commercial builds and responsive handyman work.",
   url: "https://okansolutions.com",
   email: "info@okansolutions.com",
-  phone: "+1 (250) 000-0000", // ⚠️ Placeholder — client to replace before launch
-  phoneHref: "+12500000000", // ⚠️ Placeholder — client to replace before launch
-  whatsapp: "+12500000000", // ⚠️ Placeholder — client to replace before launch
-  whatsappNumber: "12500000000", // digits only, international format
+  // ⚠️ Phone + WhatsApp are placeholders until client provides real numbers.
+  // When `hasPhone` is false, the phone CTA is hidden and replaced with a Mailto CTA.
+  hasPhone: false,
+  phone: "+1 (250) 555-0142", // visible only if hasPhone = true
+  phoneHref: "+12505550142",
+  hasWhatsapp: false,
+  whatsapp: "+1 (250) 555-0142",
+  whatsappNumber: "12505550142", // digits only, international format
   address: {
     street: "Suite #202 – 1022 James Hockey Pl.",
     city: "Kelowna",

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, MessageCircle, Star, ShieldCheck } from "lucide-react";
+import { ArrowRight, MessageCircle, Star, ShieldCheck, ChevronRight } from "lucide-react";
 import { okanBusiness, buildWhatsAppUrl } from "@/lib/okan-data";
 
 const SLIDES = [
@@ -52,13 +52,14 @@ export function Hero() {
 
   useEffect(() => {
     if (paused) return;
-    const id = setInterval(next, 6500);
+    const id = setInterval(next, 7000);
     return () => clearInterval(id);
   }, [next, paused]);
 
   const whatsappUrl = buildWhatsAppUrl(
     "Hi OKAN Solutions! I'd like to request a free quote for my project.",
   );
+  const yearsOfService = new Date().getFullYear() - okanBusiness.founded;
 
   return (
     <section
@@ -89,9 +90,14 @@ export function Hero() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Overlays */}
-      <div className="absolute inset-0 okan-hero-overlay" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+      {/* Stronger overlay for AAA text contrast (left-weighted darkening) */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(10,18,28,0.92) 0%, rgba(10,18,28,0.78) 35%, rgba(10,18,28,0.45) 65%, rgba(10,18,28,0.55) 100%), linear-gradient(180deg, rgba(10,18,28,0.55) 0%, rgba(10,18,28,0.35) 40%, rgba(10,18,28,0.85) 100%)",
+        }}
+      />
 
       {/* Slide controls */}
       <button
@@ -100,9 +106,7 @@ export function Hero() {
         aria-label="Previous slide"
         className="group absolute left-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/5 p-3 text-white backdrop-blur-sm transition hover:bg-white/15 md:flex"
       >
-        <svg className="h-5 w-5 transition-transform group-hover:-translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <ChevronLeft className="h-5 w-5 transition-transform group-hover:-translate-x-0.5" />
       </button>
       <button
         type="button"
@@ -110,9 +114,7 @@ export function Hero() {
         aria-label="Next slide"
         className="group absolute right-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/5 p-3 text-white backdrop-blur-sm transition hover:bg-white/15 md:flex"
       >
-        <svg className="h-5 w-5 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
       </button>
 
       {/* Slide indicators */}
@@ -127,7 +129,7 @@ export function Hero() {
             className="group relative h-1.5 rounded-full transition-all duration-300"
             style={{
               width: active === i ? "44px" : "16px",
-              background: active === i ? "var(--primary)" : "rgba(255,255,255,0.4)",
+              background: active === i ? "var(--primary)" : "rgba(255,255,255,0.45)",
             }}
           />
         ))}
@@ -144,61 +146,59 @@ export function Hero() {
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
             >
-              {/* Eyebrow */}
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 backdrop-blur-md">
+              {/* Eyebrow pill */}
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-md">
                 <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/90">
+                <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/95">
                   {SLIDES[active].eyebrow}
                 </span>
               </div>
 
               {/* Title */}
-              <h1 className="text-balance font-display text-4xl font-extrabold leading-[1.05] text-white drop-shadow-2xl sm:text-5xl lg:text-7xl">
+              <h1 className="text-balance font-display text-4xl font-extrabold leading-[1.04] text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)] sm:text-5xl lg:text-7xl">
                 {SLIDES[active].title}
               </h1>
 
-              {/* Subtitle */}
-              <p className="mt-6 max-w-2xl text-pretty text-base font-light leading-relaxed text-white/85 sm:text-lg lg:text-xl">
+              {/* Subtitle — heavier weight for readability */}
+              <p className="mt-6 max-w-2xl text-pretty text-base font-medium leading-relaxed text-white/95 drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)] sm:text-lg lg:text-xl">
                 {SLIDES[active].subtitle}
               </p>
 
-              {/* CTAs */}
+              {/* CTAs — clear hierarchy: primary amber solid, secondary outline WhatsApp */}
               <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                 <a
                   href="#quote"
-                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-4 text-base font-bold text-accent-foreground shadow-xl shadow-accent/30 transition-all hover:scale-[1.02] hover:brightness-95"
+                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-4 text-base font-bold text-accent-foreground shadow-xl shadow-accent/30 ring-2 ring-accent/40 transition-all hover:scale-[1.02] hover:brightness-95"
                 >
                   Get Your Free Quote
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </a>
                 <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-7 py-4 text-base font-bold text-white shadow-xl shadow-[#25D366]/30 transition-all hover:scale-[1.02] hover:bg-[#1ebe5d]"
+                  href="#quote"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-white/70 bg-white/5 px-7 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-white/15 hover:border-white"
                 >
                   <MessageCircle className="h-5 w-5" />
-                  WhatsApp Us Now
+                  Send Project Details
                 </a>
               </div>
 
-              {/* Trust row */}
-              <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-medium text-white/80">
+              {/* Trust row — larger, better separated */}
+              <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3 text-sm font-semibold text-white/95">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-accent" />
-                  Licensed · Bonded · Insured
+                  <ShieldCheck className="h-5 w-5 text-accent" />
+                  <span>Licensed · Bonded · Insured</span>
                 </div>
-                <div className="hidden h-4 w-px bg-white/20 sm:block" />
-                <div className="flex items-center gap-1">
+                <div className="hidden h-5 w-px bg-white/25 sm:block" />
+                <div className="flex items-center gap-1.5">
                   {[0, 1, 2, 3, 4].map((i) => (
                     <Star key={i} className="h-4 w-4 fill-accent text-accent" />
                   ))}
                   <span className="ml-2">5.0 from real Okanagan clients</span>
                 </div>
-                <div className="hidden h-4 w-px bg-white/20 sm:block" />
+                <div className="hidden h-5 w-px bg-white/25 sm:block" />
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-white">{okanBusiness.founded ? new Date().getFullYear() - okanBusiness.founded : 9}+ years</span>
-                  serving the Okanagan
+                  <span className="font-display text-base font-extrabold text-white">{yearsOfService}+ years</span>
+                  <span className="font-medium text-white/80">serving the Okanagan</span>
                 </div>
               </div>
             </motion.div>
@@ -206,8 +206,16 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Bottom fade into next section */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24 bg-gradient-to-t from-background to-transparent" />
+      {/* Bottom fade into next section (TrustBar overlaps via -mt-12) */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-32 bg-gradient-to-t from-background via-background/80 to-transparent" />
     </section>
+  );
+}
+
+function ChevronLeft({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
   );
 }

@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, MessageCircle, ChevronRight } from "lucide-react";
-import { okanBusiness } from "@/lib/okan-data";
-import { buildWhatsAppUrl } from "@/lib/okan-data";
+import { Menu, X, Mail, ChevronRight, ArrowRight } from "lucide-react";
+import { okanBusiness, buildWhatsAppUrl } from "@/lib/okan-data";
 
 const NAV_LINKS = [
   { label: "Services", href: "#services" },
@@ -12,7 +11,7 @@ const NAV_LINKS = [
   { label: "Projects", href: "#projects" },
   { label: "Process", href: "#process" },
   { label: "Reviews", href: "#testimonials" },
-  { label: "Service Areas", href: "#service-areas" },
+  { label: "Areas", href: "#service-areas" },
   { label: "Contact", href: "#quote" },
 ];
 
@@ -38,6 +37,9 @@ export function Navbar() {
     `Hi OKAN Solutions! I'd like to request a free quote for my project.`,
   );
 
+  // Show phone CTA only when a real phone number is configured.
+  const showPhoneCta = okanBusiness.hasPhone;
+
   return (
     <>
       <motion.header
@@ -51,15 +53,17 @@ export function Navbar() {
         }`}
       >
         <div className="mx-auto flex h-16 lg:h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          {/* Logo */}
+          {/* Logo — enlarged for premium feel */}
           <a href="#top" className="flex items-center gap-3 shrink-0" aria-label="OKAN Solutions home">
-            <div className="relative h-9 w-24 lg:h-11 lg:w-32">
+            <span className="sr-only">OKAN Solutions Inc.</span>
+            <div className="relative h-11 w-32 lg:h-14 lg:w-40">
               { }
               <img
                 src="/okan/logo-white.png"
-                alt="OKAN Solutions Inc."
+                alt=""
+                aria-hidden="true"
                 className={`h-full w-full object-contain transition-all duration-300 ${
-                  scrolled ? "" : "drop-shadow-lg"
+                  scrolled ? "" : "drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
                 }`}
                 style={scrolled ? { filter: "brightness(0) saturate(0)" } : undefined}
               />
@@ -67,12 +71,12 @@ export function Navbar() {
           </a>
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-0.5 xl:flex" aria-label="Primary">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="relative rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary"
+                className="relative rounded-md px-3 py-2 text-sm font-semibold transition-colors hover:text-primary"
                 style={{ color: scrolled ? "var(--foreground)" : "rgba(255,255,255,0.92)" }}
               >
                 {link.label}
@@ -80,36 +84,41 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* CTAs */}
+          {/* Right-side actions — single primary CTA + optional phone icon */}
           <div className="hidden items-center gap-2 lg:flex">
-            <a
-              href={`tel:${okanBusiness.phoneHref}`}
-              className="group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all hover:bg-white/10"
-              style={{
-                borderColor: scrolled ? "var(--border)" : "rgba(255,255,255,0.3)",
-                color: scrolled ? "var(--foreground)" : "#fff",
-              }}
-              aria-label={`Call OKAN Solutions at ${okanBusiness.phone}`}
-            >
-              <Phone className="h-4 w-4" />
-              <span className="hidden xl:inline">{okanBusiness.phone}</span>
-              <span className="xl:hidden">Call</span>
-            </a>
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-sm font-semibold text-white shadow-md shadow-[#25D366]/20 transition-all hover:scale-[1.03] hover:bg-[#1ebe5d]"
-            >
-              <MessageCircle className="h-4 w-4" />
-              WhatsApp
-            </a>
+            {showPhoneCta ? (
+              <a
+                href={`tel:${okanBusiness.phoneHref}`}
+                className="inline-flex items-center justify-center rounded-full p-2.5 transition-colors hover:bg-white/10"
+                style={{
+                  color: scrolled ? "var(--foreground)" : "#fff",
+                  border: `1px solid ${scrolled ? "var(--border)" : "rgba(255,255,255,0.25)"}`,
+                }}
+                aria-label={`Call OKAN Solutions at ${okanBusiness.phone}`}
+                title={okanBusiness.phone}
+              >
+                <PhoneIcon className="h-4 w-4" />
+              </a>
+            ) : (
+              <a
+                href={`mailto:${okanBusiness.email}`}
+                className="inline-flex items-center justify-center rounded-full p-2.5 transition-colors hover:bg-white/10"
+                style={{
+                  color: scrolled ? "var(--foreground)" : "#fff",
+                  border: `1px solid ${scrolled ? "var(--border)" : "rgba(255,255,255,0.25)"}`,
+                }}
+                aria-label={`Email OKAN Solutions at ${okanBusiness.email}`}
+                title={okanBusiness.email}
+              >
+                <Mail className="h-4 w-4" />
+              </a>
+            )}
             <a
               href="#quote"
-              className="group inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2 text-sm font-bold text-accent-foreground shadow-md shadow-accent/25 transition-all hover:scale-[1.03] hover:brightness-95"
+              className="group inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-sm font-bold text-accent-foreground shadow-md shadow-accent/25 transition-all hover:scale-[1.03] hover:brightness-95"
             >
               Get Free Quote
-              <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </a>
           </div>
 
@@ -137,7 +146,7 @@ export function Navbar() {
             className="fixed inset-0 z-[60] lg:hidden"
           >
             <div
-              className="absolute inset-0 bg-[oklch(0.21_0.022_244)]/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-[oklch(0.21_0.022_244)]/85 backdrop-blur-sm"
               onClick={() => setMobileOpen(false)}
             />
             <motion.div
@@ -152,7 +161,7 @@ export function Navbar() {
                 <img
                   src="/okan/logo-white.png"
                   alt="OKAN Solutions Inc."
-                  className="h-9 w-28 object-contain brightness-0 saturate-0"
+                  className="h-10 w-32 object-contain brightness-0 saturate-0"
                 />
                 <button
                   type="button"
@@ -170,7 +179,7 @@ export function Navbar() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between rounded-lg px-4 py-3.5 text-base font-medium text-foreground transition-colors hover:bg-muted"
+                    className="flex items-center justify-between rounded-lg px-4 py-3.5 text-base font-semibold text-foreground transition-colors hover:bg-muted"
                   >
                     {link.label}
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -179,21 +188,21 @@ export function Navbar() {
               </nav>
 
               <div className="space-y-3 border-t border-border p-5">
+                {showPhoneCta && (
+                  <a
+                    href={`tel:${okanBusiness.phoneHref}`}
+                    className="flex items-center justify-center gap-2 rounded-full border border-border px-4 py-3 text-sm font-semibold"
+                  >
+                    <PhoneIcon className="h-4 w-4 text-primary" />
+                    {okanBusiness.phone}
+                  </a>
+                )}
                 <a
-                  href={`tel:${okanBusiness.phoneHref}`}
+                  href={`mailto:${okanBusiness.email}`}
                   className="flex items-center justify-center gap-2 rounded-full border border-border px-4 py-3 text-sm font-semibold"
                 >
-                  <Phone className="h-4 w-4 text-primary" />
-                  {okanBusiness.phone}
-                </a>
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-semibold text-white"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  WhatsApp Us
+                  <Mail className="h-4 w-4 text-primary" />
+                  Email Us
                 </a>
                 <a
                   href="#quote"
@@ -201,9 +210,9 @@ export function Navbar() {
                   className="flex items-center justify-center gap-2 rounded-full bg-accent px-4 py-3.5 text-sm font-bold text-accent-foreground"
                 >
                   Get Free Quote
-                  <ChevronRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" />
                 </a>
-                <p className="pt-2 text-center text-xs text-muted-foreground">
+                <p className="pt-2 text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {okanBusiness.certifications.join(" · ")}
                 </p>
               </div>
@@ -212,5 +221,22 @@ export function Navbar() {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function PhoneIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
   );
 }

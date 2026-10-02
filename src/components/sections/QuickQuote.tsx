@@ -38,40 +38,67 @@ export function QuickQuote() {
       return;
     }
 
-    const message = [
-      `*New Project Quote Request — OKAN Solutions*`,
+    const useWhatsapp = okanBusiness.hasWhatsapp;
+
+    const messageLines = [
+      `New Project Quote Request — OKAN Solutions`,
       ``,
-      `*Name:* ${form.name}`,
-      `*Phone:* ${form.phone}`,
-      form.email ? `*Email:* ${form.email}` : null,
-      `*Service needed:* ${form.service}`,
+      `Name: ${form.name}`,
+      `Phone: ${form.phone}`,
+      form.email ? `Email: ${form.email}` : null,
+      `Service needed: ${form.service}`,
       ``,
-      `*Project details:*`,
+      `Project details:`,
       form.message,
       ``,
-      `_Sent from okansolutions.com landing page_`,
-    ]
-      .filter(Boolean)
-      .join("\n");
+      `Sent from okansolutions.com landing page`,
+    ].filter(Boolean);
 
-    const whatsappUrl = buildWhatsAppUrl(message);
-    const mailtoUrl = buildMailtoUrl(
-      `New quote request from ${form.name} — ${form.service}`,
-      message,
-    );
+    if (useWhatsapp) {
+      // WhatsApp-formatted message (uses *bold* and _italic_)
+      const waMessage = [
+        `*New Project Quote Request — OKAN Solutions*`,
+        ``,
+        `*Name:* ${form.name}`,
+        `*Phone:* ${form.phone}`,
+        form.email ? `*Email:* ${form.email}` : null,
+        `*Service needed:* ${form.service}`,
+        ``,
+        `*Project details:*`,
+        form.message,
+        ``,
+        `_Sent from okansolutions.com landing page_`,
+      ].filter(Boolean).join("\n");
 
-    // Open WhatsApp in a new tab
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+      const whatsappUrl = buildWhatsAppUrl(waMessage);
+      const mailtoUrl = buildMailtoUrl(
+        `New quote request from ${form.name} — ${form.service}`,
+        messageLines.join("\n"),
+      );
 
-    // Fallback / backup — also prepare the mailto link as a toast action
-    toast.success("Opening WhatsApp…", {
-      description: "If WhatsApp doesn't open, tap here to email us instead.",
-      duration: 8000,
-      action: {
-        label: "Email instead",
-        onClick: () => (window.location.href = mailtoUrl),
-      },
-    });
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+
+      toast.success("Opening WhatsApp…", {
+        description: "If WhatsApp doesn't open, tap here to email us instead.",
+        duration: 8000,
+        action: {
+          label: "Email instead",
+          onClick: () => (window.location.href = mailtoUrl),
+        },
+      });
+    } else {
+      // No WhatsApp configured — route directly to email
+      const mailtoUrl = buildMailtoUrl(
+        `New quote request from ${form.name} — ${form.service}`,
+        messageLines.join("\n"),
+      );
+      window.location.href = mailtoUrl;
+
+      toast.success("Opening your email app…", {
+        description: "We'll get back to you within one business day.",
+        duration: 6000,
+      });
+    }
 
     setForm(INITIAL);
   };
@@ -121,16 +148,16 @@ export function QuickQuote() {
               <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
                 free quote
               </span>{" "}
-              — sent straight to WhatsApp
+              — reply within 1 business day
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="mt-5 text-pretty text-base leading-relaxed text-white/75 sm:text-lg"
+              className="mt-5 text-pretty text-base leading-relaxed text-white/80 sm:text-lg"
             >
-              Tell us about your project. We&apos;ll review it and reply on WhatsApp with next steps,
+              Tell us about your project. We&apos;ll review it and reply with next steps,
               availability, and a transparent estimate — no sales pressure, no surprise fees.
             </motion.p>
 
@@ -159,18 +186,20 @@ export function QuickQuote() {
 
             {/* Direct contact methods */}
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href={buildWhatsAppUrl("Hi OKAN Solutions! I'd like to request a free quote.")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-[#25D366]/20 transition-all hover:scale-[1.02] hover:bg-[#1ebe5d]"
-              >
-                <MessageCircle className="h-4 w-4" />
-                Chat on WhatsApp
-              </a>
+              {okanBusiness.hasWhatsapp ? (
+                <a
+                  href={buildWhatsAppUrl("Hi OKAN Solutions! I'd like to request a free quote.")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-[#25D366]/20 transition-all hover:scale-[1.02] hover:bg-[#1ebe5d]"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Chat on WhatsApp
+                </a>
+              ) : null}
               <a
                 href={`mailto:${okanBusiness.email}`}
-                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-5 py-3 text-sm font-bold text-white backdrop-blur-sm transition-all hover:bg-white/10"
+                className="inline-flex items-center gap-2 rounded-full border-2 border-white/30 bg-white/5 px-5 py-3 text-sm font-bold text-white backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/60"
               >
                 <Mail className="h-4 w-4" />
                 {okanBusiness.email}
@@ -277,13 +306,13 @@ export function QuickQuote() {
                 </Field>
               </div>
 
-              {/* Submit */}
+              {/* Submit — primary amber CTA, consistent with site hierarchy */}
               <button
                 type="submit"
-                className="group mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-4 text-base font-bold text-white shadow-lg shadow-[#25D366]/30 transition-all hover:scale-[1.01] hover:bg-[#1ebe5d]"
+                className="group mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-4 text-base font-bold text-accent-foreground shadow-lg shadow-accent/30 transition-all hover:scale-[1.01] hover:brightness-95"
               >
                 <Send className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
-                Send via WhatsApp
+                {okanBusiness.hasWhatsapp ? "Send via WhatsApp" : "Send Request"}
               </button>
 
               <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
